@@ -1,6 +1,5 @@
 import React from "react";
-// import "./login.css";
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -9,7 +8,9 @@ function Login() {
         email: "",
         password: "",
         role: '1'
-    });
+    })
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,7 +34,7 @@ function Login() {
             
             if (success) {
                 toast.success("Login Successful", {
-                    autoClose: 1500, onClose: () => window.location.reload(),
+                    autoClose: 1500, onClose: () => navigate("/"),
                 });
             }
 
