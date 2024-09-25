@@ -27,7 +27,6 @@ function App() {
     const authenticateUser = async () => {
       try {
         const checkAuth = await checkSession();
-        // console.log(checkAuth);
         if (checkAuth.isAuth) {
           setIsAuthenticated(true);
         }
@@ -37,7 +36,6 @@ function App() {
       } finally {
         setLoading(false); // Set loading to false after authentication check
       }
-      // console.log("isAuthenticated", isAuthenticated);
     };
     if (!isAuthenticated) {
       authenticateUser(); // Check session only if user is not authenticated

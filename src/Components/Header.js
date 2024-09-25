@@ -16,7 +16,6 @@ function Header() {
     const navigate = useNavigate();
 
     const handleSearch = () => {
-        // Navigate to the page based on the search term
         if (search.trim() !== "") {
             // For simplicity, let's assume each page has a unique path
             navigate(`/${search}`);
@@ -94,14 +93,13 @@ function Header() {
             await axios.post("http://localhost:8000/user/userlogout");
             toast.success("Logout Successful", {
                 autoClose: 1000,
-                onClose: () => window.location.reload(),
+                onClose: () => navigate("/login"),
                 position: "top-left",
             });
         } catch (error) {
-            console.log("Logout Err: ", error);
             toast.error(error.response.data.message, {
                 autoClose: 1500,
-                onClose: () => window.location.reload(),
+                onClose: () => navigate("/login"),
                 position: "top-left",
             });
         } finally {

@@ -33,7 +33,6 @@ function AddComplaint() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(complaint);
         try {
           const response = await ApiCall("POST", "user/addComplaint", complaint);
             const { success } = response.data;
@@ -44,7 +43,6 @@ function AddComplaint() {
             }
 
         } catch (error) {
-            console.log(error);
             if (error.response && error.response.status === 401) {
                 toast.error(error.response.data.message, {
                     autoClose: 1500, onClose: () => navigate("/"),

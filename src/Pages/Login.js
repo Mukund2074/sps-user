@@ -12,7 +12,6 @@ function Login({ setIsAuthenticated }) {
 
     const navigate = useNavigate();
 
-    console.log("isAuthenticated", setIsAuthenticated);
     const authenticateUser = () => {
         setIsAuthenticated(true);
         navigate("/");
@@ -46,7 +45,6 @@ function Login({ setIsAuthenticated }) {
             }
 
         } catch (error) {
-            console.log("Login Err: ", error);
             if (error.response && error.response.status === 401) {
                 toast.error(error.response.data.message, {
                     autoClose: 1500,

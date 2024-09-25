@@ -33,7 +33,6 @@ function Apply() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(cardApplyDetail);
         try {
             const response = await axios.post(
                 "http://localhost:8000/user/applyForCard",
@@ -48,7 +47,6 @@ function Apply() {
             }
 
         } catch (error) {
-            console.log(error);
             if (error.response && error.response.status === 401) {
                 toast.error(error.response.data.message, {
                     autoClose: 1500, onClose: () => navigate("/"),

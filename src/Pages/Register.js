@@ -37,7 +37,6 @@ function Register() {
                 });
             }
         } catch (error) {
-            console.log("Reg Err: ", error);
             if (error.response) {
                 toast.error(error.response.data.message, {
                     autoClose: 1500,

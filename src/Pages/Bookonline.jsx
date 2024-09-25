@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import axios from "axios";
+import {toast} from 'react-toastify'
 
 export default function Bookonline() {
     const [areas, setAreas] = useState([]);
@@ -16,16 +17,15 @@ export default function Bookonline() {
             .then((response) => {
                 if (Array.isArray(response.data.areas)) {
                     setAreas(response.data.areas);
-                    console.log(response);
                 } else {
-                    console.error("Areas data is not an array:", response.data.areas);
+                    toast.error("Error fetching areas:", response.data.message);
                 }
             })
             .catch(error => {
-                console.error("Error fetching areas:", error);
+                toast.error("Error fetching areas:", error);
             });
         } catch (error) {
-            console.error("Error in useEffect:", error);
+            toast.error("Error in useEffect:", error);
         }
     }, []);
 
@@ -36,9 +36,6 @@ export default function Bookonline() {
     );
 
     const handleBook = (item) => {
-        // Handle book button click
-        console.log("Clicked card data:", item);
-     
         navigate("/payment", { state: { cardData: item } });
     };
 
