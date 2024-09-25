@@ -56,8 +56,8 @@ function App() {
       <ToastContainer stacked />
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={!isAuthenticated ? < Login /> : <Navigate to="/" />} />
-          <Route path="/signup" element={!isAuthenticated ? < Register /> : <Navigate to="/" />} />
+          <Route path="/login" element={ < Login setIsAuthenticated={setIsAuthenticated} /> } />
+          <Route path="/signup" element={< Register />} />
           <Route path="/applyForCard" element={isAuthenticated ? < Apply /> : <Navigate to="/" />} />         
           <Route path="/bookings" element={isAuthenticated ? < GetOnlineBooking /> : <Navigate to="/" />} />
           <Route path="/addComplaint" element={isAuthenticated ? < AddComplaint /> : <Navigate to="/" />} />
