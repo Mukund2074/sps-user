@@ -2,17 +2,46 @@ import React, { useEffect } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import ApiCall from "../ApiCall";
 
 function Contact() {
     useEffect(() => {
 
         window.scrollTo(0, 0, { behavior: "smooth" });
     })
+    const [formdata, setFormdata] = useState({
+        name: "",
+        email: "",
+        subject: "",
+        phoneNo: "",
+        message: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormdata((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            //    const responce = await ApiCall("POST", "user/contact", formdata);
+            //    if (responce.data.success) {
+            //        toast.success("Message sent successfully", {
+            //            autoClose: 1500,});
+            //    }
+
+        } catch (error) {
+            toast.error(error.response.data.message);
+        }
+    };
     return (
         <>
             <Header />
-            {/*/header*/}
-            {/* about breadcrumb */}
             <section className="w3l-about-breadcrumb position-relative text-center">
                 <div className="breadcrumb-bg breadcrumb-bg-about py-sm-5 py-4">
                     <div className="container py-lg-5 py-3">
@@ -65,7 +94,7 @@ function Contact() {
                                         </p>
                                         <h6 className="mt-4">Contact:</h6>
                                         <p className="margin-top">
-                                            <a href="tel:+(91)7487841902">+(91)7487841902</a>
+                                            <a href="tel:+(91)DriveSyncParkX">+(91)DriveSyncParkX</a>
                                         </p>
                                     </div>
                                 </div>
@@ -82,8 +111,9 @@ function Contact() {
                                     <div className="form-input">
                                         <input
                                             type="text"
-                                            name="w3lName"
-                                            id="w3lName"
+                                            onChange={handleChange}
+                                            value={formdata.name}
+                                            name="name"
                                             placeholder="Name"
                                         />
                                     </div>
@@ -91,8 +121,9 @@ function Contact() {
                                         <div className="col-lg-6 form-input">
                                             <input
                                                 type="email"
-                                                name="w3lSender"
-                                                id="w3lSender"
+                                                name="email"
+                                                onChange={handleChange}
+                                                value={formdata.email}
                                                 placeholder="Email"
                                                 required
                                             />
@@ -100,17 +131,30 @@ function Contact() {
                                         <div className="col-lg-6 form-input">
                                             <input
                                                 type="text"
-                                                name="w3lSubect"
+                                                name="subject"
+                                                onChange={handleChange}
+                                                value={formdata.subject}
                                                 placeholder="Subject"
                                                 className="contact-input"
                                             />
                                         </div>
+
+                                    </div>
+                                    <div className="form-input">
+                                        <input
+                                            type="text"
+                                            onChange={handleChange}
+                                            value={formdata.phoneNo}
+                                            name="phoneNo"
+                                            placeholder="Phone Number"
+                                        />
                                     </div>
                                     <div className="form-input">
                                         <textarea
                                             placeholder="Message"
-                                            name="w3lMessage"
-                                            id="w3lMessage"
+                                            name="message"
+                                            onChange={handleChange}
+                                            value={formdata.message}
                                             required
                                             defaultValue={""}
                                         />

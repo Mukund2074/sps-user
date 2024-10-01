@@ -3,9 +3,9 @@ import CardReactFormContainer from "card-react";
 import Header from '../Components/Header';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../Components/Footer';
-import Datetime from 'react-datetime';
+import { toast } from 'react-toastify';
 import "react-datetime/css/react-datetime.css";
-import axios from 'axios';
+import ApiCall from '../ApiCall';
 import * as EmailJS from 'emailjs-com';
 
 export default function Payment() {
@@ -13,7 +13,6 @@ export default function Payment() {
     const [fromTime, setFromTime] = useState('');
     const [toTime, setToTime] = useState('');
     const [charge, setCharge] = useState(0);
-    const [sessioninfo, setSessioninfo] = useState({});
     const [isTimeFixed, setIsTimeFixed] = useState(false);
     const [cardDetails, setCardDetails] = useState({
         number: '',
@@ -26,33 +25,23 @@ export default function Payment() {
     const Navigate = useNavigate();
 
     const calculateCharge = useCallback(() => {
+        if (!fromTime || !toTime) return;
+
         const start = new Date(fromTime);
         const end = new Date(toTime);
-        const diff = (end - start) / (1000 * 60 * 60); // difference in hours
+        const diff = (end - start) / (1000 * 60 * 60); // Difference in hours
 
-        let ratePerHour = 10; // Default rate per hour
+        let ratePerHour = 10;
         if (diff < 1) {
-            setCharge(10); // If duration is less than 1 hour, charge 10
+            setCharge(10); // Minimum charge
         } else if (diff > 0) {
-            setCharge(diff * ratePerHour); // Calculate charge based on duration * rate per hour
+            setCharge(diff * ratePerHour);
         } else {
-            setCharge(0); // Set charge to 0 if there's no duration
+            setCharge(0);
         }
     }, [fromTime, toTime]);
 
-    useEffect(() => {
-        const fetchSession = async () => {
-            try {
-                const response = await axios.post('http://localhost:8000/user/usersession');
-                setSessioninfo(response.data.sessionData.session);
-                console.log(response.data.sessionData.session);
-            } catch (error) {
-                console.error(error);
-            }
-        };
 
-        fetchSession();
-    }, []); // Empty dependency array to run only once on component mount
 
     useEffect(() => {
         if (isTimeFixed && fromTime && toTime) {
@@ -60,20 +49,19 @@ export default function Payment() {
         }
     }, [fromTime, toTime, isTimeFixed, calculateCharge]);
 
-    const handleFromTimeChange = (date) => {
-        if (date && date.toISOString) {
-            setFromTime(date.toISOString());
-            if (toTime && new Date(toTime) <= date) {
-                setToTime('');
-            }
+    const handleFromTimeChange = (event) => {
+        const value = event.target.value;
+        setFromTime(value);
+        if (toTime && new Date(toTime) <= new Date(value)) {
+            setToTime('');
         }
     };
 
-    const handleToTimeChange = (date) => {
-        if (date && date.toISOString) {
-            setToTime(date.toISOString());
-        }
+    const handleToTimeChange = (event) => {
+        const value = event.target.value;
+        setToTime(value);
     };
+
 
     const handleFixTime = () => {
         const now = new Date();
@@ -97,15 +85,8 @@ export default function Payment() {
 
         setIsTimeFixed(true);
         calculateCharge();
-        console.log(fromTime, toTime, charge);
     };
 
-    const isValidDate = (current) => {
-        const now = new Date();
-        const maxDate = new Date();
-        maxDate.setHours(now.getHours() + 48);
-        return current.isAfter(now) && current.isBefore(maxDate);
-    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -117,12 +98,12 @@ export default function Payment() {
 
     const sendEmail = async () => {
         try {
-            const response = await EmailJS.send(
+            await EmailJS.send(
                 'sps', // Replace with your EmailJS service ID
                 'template_1olquug', // Replace with your EmailJS template ID
                 {
-                    to_email: sessioninfo.email, // Dynamically specify recipient email address
-                    to_name: sessioninfo.email,
+                    to_email: localStorage.getItem('email'), // Dynamically specify recipient email address
+                    to_name: localStorage.getItem('email'),
                     message: 'Your payment was successful.',
                     area: cardData.Name,
                     Zipcode: cardData.Zipcode,
@@ -134,43 +115,36 @@ export default function Payment() {
                 'OdgX-RtTLKIJGeJLI' // Replace with your EmailJS user ID
             );
 
-            console.log('Email sent:', response);
         } catch (error) {
-            console.error('Email error:', error);
+            toast.error('Email error:', error);
         }
     };
 
     const handlePayment = async (e) => {
         e.preventDefault();
-        console.log("Data being sent:", {
-            cardData,
-            cardDetails,
+
+        const payload = {
+            UserId: document.cookie.split('; ').find((cookie) => cookie.startsWith("userData="))?.split('=')[1],
+            Area: cardData,
+            PaymentCard: cardDetails,
             fromTime,
             toTime,
             charge
-        });
+        };
         try {
-            const response = await axios.post('http://localhost:8000/user/payment', {
-                cardData,
-                cardDetails,
-                fromTime,
-                toTime,
-                sessioninfo,
-                charge
+            const response = await ApiCall('POST', 'user/payment', {
+                ...payload
             });
-            console.log(response.data);
 
             if (response.data.success) {
                 alert('Payment Successful!');
-                console.log(response.data.data);
                 Navigate('/bookings', { state: { data: response.data.data } });
                 sendEmail();
             } else {
                 alert('Payment Failed. Please try again.');
             }
         } catch (error) {
-            console.error('Payment Error:', error);
-            alert('An error occurred during payment processing.');
+            toast.error('Payment Error:', error);
         }
     };
 
@@ -214,50 +188,37 @@ export default function Payment() {
                             onMouseLeave={() => setHoverIndex(null)}
                         >
                             <div className="card-body">
-                            <span className="cause-title-wrap">
-                                <h4 className="cause-title">{cardData.Name} - {cardData.Locality}</h4>
-                                <h4 className="cause-title">{cardData.Zipcode}</h4>
-                            </span>
-                            <p className="card-text mb-0">
-                                Available Slots: {cardData.availableOnlineSlot}
-                            </p>
-                            <div>
+                                <span className="cause-title-wrap">
+                                    <h4 className="cause-title">{cardData.Name} - {cardData.Locality}</h4>
+                                    <h4 className="cause-title">{cardData.Zipcode}</h4>
+                                </span>
+                                <p className="card-text mb-0">
+                                    Available Slots: {cardData.availableOnlineSlot}
+                                </p>
                                 <div>
-                                    <label htmlFor="fromTime">From Time:</label>
-                                    <Datetime
-                                        id="fromTime"
-                                        value={fromTime ? new Date(fromTime) : ''}
-                                        onChange={handleFromTimeChange}
-                                        isValidDate={isValidDate}
-                                        inputProps={{ placeholder: 'Select From Time', required: true }}
-                                        dateFormat="YYYY-MM-DD"
-                                        timeFormat="HH:mm"
-                                        className="time-picker"
-                                    />
+                                    <div>
+                                        <label htmlFor="fromTime">From Time:</label>
+                                        <input
+                                            id="fromTime"
+                                            type="datetime-local"
+                                            value={fromTime}
+                                            onChange={handleFromTimeChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="toTime">To Time:</label>
+                                        <input
+                                            id="toTime"
+                                            type="datetime-local"
+                                            value={toTime}
+                                            onChange={handleToTimeChange}
+                                        />
+                                    </div>
+                                    <button onClick={handleFixTime} className='btn btn-secondary mt-3'>Fix This Time</button>
                                 </div>
-                                <div>
-                                    <label htmlFor="toTime">To Time:</label>
-                                    <Datetime
-                                        id="toTime"
-                                        value={toTime ? new Date(toTime) : ''}
-                                        onChange={handleToTimeChange}
-                                        isValidDate={(current) => {
-                                            const fromDate = new Date(fromTime);
-                                            const maxDate = new Date(fromDate);
-                                            maxDate.setHours(fromDate.getHours() + 48);
-                                            return current.isAfter(fromDate) && current.isBefore(maxDate);
-                                        }}
-                                        inputProps={{ placeholder: 'Select To Time', required: true }}
-                                        dateFormat="YYYY-MM-DD"
-                                        timeFormat="HH:mm"
-                                        className="time-picker"
-                                    />
-                                </div>
-                                <button onClick={handleFixTime} className='btn btn-secondary mt-3'>Fix This Time</button>
-                            </div>
-                            <span className="cause-title-wrap">
-                                <h4 className="cause-title">Charge Should be = {charge.toFixed(2)} INR</h4>
-                            </span>
+                                <span className="cause-title-wrap">
+                                    <h4 className="cause-title">Charge Should be = {charge.toFixed(2)} INR</h4>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -292,28 +253,28 @@ export default function Payment() {
                                                 required
                                             />
                                         </div>
-                                        <div className="form-group">
-                                            <label htmlFor="expiry">MM/YYYY</label>
-                                            <input
-                                                className="form-control"
-                                                id="expiry"
-                                                placeholder="MM/YYYY"
-                                                type="text"
-                                                name="expiry"
-                                                value={cardDetails.expiry}
-                                                onChange={handleInputChange}
-                                                required
-                                            />
-                                        </div>
+                                        <label htmlFor="expiry">Expiry</label>
+                                        <input
+                                            className="form-control"
+                                            id="expiry"
+                                            placeholder="MM/YYYY"
+                                            type="text" // Use text for MM/YYYY format
+                                            name="expiry"
+                                            value={cardDetails.expiry}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+
                                         <div className="form-group">
                                             <label htmlFor="cvc">CVC</label>
                                             <input
                                                 className="form-control"
                                                 id="cvc"
                                                 placeholder="CVC"
-                                                type="text"
+                                                type="number"
                                                 name="cvc"
                                                 value={cardDetails.cvc}
+                                                onChange={handleInputChange}
                                                 maxLength={3}
                                                 required
                                             />
@@ -332,6 +293,6 @@ export default function Payment() {
             <Footer />
         </div>
     );
-    
-    
+
+
 }

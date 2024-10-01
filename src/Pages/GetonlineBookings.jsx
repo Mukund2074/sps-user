@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import ApiCall from "../ApiCall";
 import { toast } from 'react-toastify';
 import DataTable from 'react-data-table-component';
 
@@ -11,15 +11,18 @@ export default function GetOnlineBooking() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    window.scrollTo(0, 0, { behavior: 'smooth' });
-
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/user/getonlinebooking');
-        setBooking(response.data.bookings);
+        const response = await ApiCall("GET", `user/getOnlineBookingApi/${document.cookie.split('; ').find((cookie) => cookie.startsWith("userData="))?.split('=')[1]}`);
+        // Check if response.data.bookings is an object
+        if (response.data.bookings && typeof response.data.bookings === 'object' && !Array.isArray(response.data.bookings)) {
+          setBooking([response.data.bookings]); // Wrap it in an array
+        } else {
+          setBooking(response.data.bookings); // If it's already an array, set it directly
+        }
         setIsLoading(false);
       } catch (error) {
-        toast.error(error);
+        toast.error('Error fetching data:');
       }
     };
     fetchData();
@@ -38,26 +41,32 @@ export default function GetOnlineBooking() {
       ),
     },
     {
-      name: 'Payment Time',
-      selector: row => new Date(row.timestamp).toLocaleString(),
-      sortable: true,
-    },
-    {
-      name: 'Booking From Time',
+      name: 'From Time',
       selector: row => new Date(row.fromTime).toLocaleString(),
       sortable: true,
     },
     {
-      name: 'Booking To Time',
+      name: 'To Time',
       selector: row => new Date(row.toTime).toLocaleString(),
       sortable: true,
     },
     {
+      name: 'Charges',
+      selector: row => row.charge, // Fixed: This should refer to the charge directly
+      sortable: true,
+    },
+    {
+      name: 'User Name',
+      selector: row => row.userName, // Fixed: This should refer to userName directly
+      sortable: true,
+    },
+    {
       name: 'Parking Slot Name',
-      selector: row => `${row.cardData.Name} / ${row.cardData.Locality} / ${row.cardData.Zipcode}`,
+      selector: row => `${row.areaName} / ${row.locality} / ${row.zipcode}`, // Fixed: Changed Locality to locality for case sensitivity
       sortable: true,
     },
   ];
+
 
   return (
     <>
@@ -65,14 +74,14 @@ export default function GetOnlineBooking() {
       <section className="w3l-about-breadcrumb position-relative text-center">
         <div className="breadcrumb-bg breadcrumb-bg-about py-sm-5 py-4">
           <div className="container py-lg-5 py-3">
-            <h2 className="title">Current Online Booking</h2>
+            <h2 className="title"> Slot Bookings</h2>
             <ul className="breadcrumbs-custom-path mt-2">
               <li>
                 <Link to="/">Home</Link>
               </li>
               <li className="active">
                 <span className="fa fa-angle-double-right mx-2" aria-hidden="true" />
-                Current Online Booking
+                Slot Bookings
               </li>
             </ul>
           </div>
@@ -85,17 +94,17 @@ export default function GetOnlineBooking() {
               {isLoading ? (
                 <p>Loading...</p>
               ) : (
-             <div className="col-lg-12 d-flex flex-column d-md-block">
-                 <DataTable
-                  data={booking}
-                  columns={columns}
-                  pagination
-                  highlightOnHover
-                  responsive
-                  striped
-                  theme="dark"
-                />
-             </div>
+                <div className="col-lg-12 d-flex flex-column d-md-block">
+                  <DataTable
+                    data={booking}
+                    columns={columns}
+                    pagination
+                    highlightOnHover
+                    responsive
+                    striped
+                    theme="dark"
+                  />
+                </div>
               )}
             </div>
           </div>

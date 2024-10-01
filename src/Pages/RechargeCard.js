@@ -1,29 +1,31 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 import CardReactFormContainer from "card-react";
+import ApiCall from "../ApiCall";
 
 function RechargeCard() {
     const navigate = useNavigate();
-    // eslint-disable-next-line
-    const [isCardNumberValid, setIsCardNumberValid] = useState(true);
     const [RechargeCardDetail, setRechargeCardDetail] = useState({
         balance: "",
     });
+    const [paymentCardDetail, setPaymentCardDetail] = useState({
+        number: "",
+        expiry: "",
+        name: "",
+        cvc: ""
+    });
 
-    const handleChange = (e) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        let formattedValue = value;
-        if (name === "aadhaarNo") {
-            formattedValue = value.replace(/\D/g, ""); // Remove non-numeric characters
-            formattedValue = formattedValue.replace(/(\d{4})(?=\d)/g, "$1 "); // Add space after every 4 digits
-        }
-        setRechargeCardDetail({ ...RechargeCardDetail, [name]: formattedValue });
+            setPaymentCardDetail({
+                ...paymentCardDetail,
+                [name]: value,
+            });
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,10 +33,24 @@ function RechargeCard() {
         const nestedDiv = cardWrapper.querySelector(".jp-card-identified");
         if (nestedDiv) {
             try {
-                const response = await axios.post(
-                    "http://localhost:8000/user/rechargeCard",
-                    RechargeCardDetail
-                );
+                const hasCard = document.cookie
+                    .split('; ')
+                    .find((cookie) => cookie.startsWith('hasCard='))
+                    ?.split('=')[1];
+
+                if (!hasCard) {
+                    toast.error('User data not found in cookies');
+                    return;
+                }
+
+                const payload = {
+                    userId: document.cookie.split('; ').find((cookie) => cookie.startsWith("userData="))?.split('=')[1],
+                    balance: RechargeCardDetail.balance,
+                    cardDetails: paymentCardDetail
+                }
+                const response = await ApiCall("POST", `user/rechargeCard`, {
+                    ...payload,
+                });
 
                 const { success } = response.data;
                 if (success) {
@@ -42,6 +58,7 @@ function RechargeCard() {
                         autoClose: 1500,
                         onClose: () => navigate("/viewCard"),
                     });
+                
                 }
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -56,7 +73,6 @@ function RechargeCard() {
                 }
             }
         } else {
-            // The jp-card-identified class is not present
             toast.error("Please provide valid card details.", { autoClose: 1500 });
         }
     };
@@ -67,7 +83,7 @@ function RechargeCard() {
             <section className="w3l-about-breadcrumb position-relative text-center">
                 <div className="breadcrumb-bg breadcrumb-bg-about py-sm-5 py-4">
                     <div className="container py-lg-5 py-3">
-                        <h2 className="title">Add Balance</h2>
+                        <h2 className="title">Recharge Card</h2>
                         <ul className="breadcrumbs-custom-path mt-2">
                             <li>
                                 <Link to="/">Home</Link>
@@ -77,7 +93,7 @@ function RechargeCard() {
                                     className="fa fa-angle-double-right mx-2"
                                     aria-hidden="true"
                                 />
-                                Add Balance
+                                Recharge Card
                             </li>
                         </ul>
                     </div>
@@ -89,7 +105,7 @@ function RechargeCard() {
                     <div className="row">
                         <div className="col-lg-6 form-inner-cont">
                             <div className="title-content text-left">
-                                <h3 className="hny-title mb-lg-5 mb-4">Add Balance</h3>
+                                <h3 className="hny-title mb-lg-5 mb-4">Recharge Card</h3>
                             </div>
                             <div className="row">
                                 <div className="col-lg-12">
@@ -97,34 +113,35 @@ function RechargeCard() {
                                         <div className="signin-form">
                                             <CardReactFormContainer container="card-wrapper">
                                                 <div className="row form-inner-cont">
-                                                    <div className="col-lg-12">
+                                                    <div className="col-lg-12" >
                                                         <div className="form-input">
-                                                            <label htmlFor="vehicleNo">Add Balance</label>
+                                                            <label htmlFor="vehicleNo">Add Amount</label>
                                                             <input
                                                                 type="number"
                                                                 name="balance"
-                                                                placeholder="Add Balance"
+                                                                placeholder="Minimum allowed amount is 100 ₹"
                                                                 value={RechargeCardDetail.balance}
-                                                                onChange={handleChange}
+                                                                onChange={(e) => setRechargeCardDetail({ ...RechargeCardDetail, balance: e.target.value })}
                                                                 min={100}
                                                                 required
                                                             />
                                                         </div>
                                                     </div>
 
-                                                    <div className="col-lg-6">
+
+                                                    <div className="col-lg-6 mt-4" >
                                                         <div className="form-group">
                                                             <label htmlFor="number">Card number</label>
                                                             <input
-                                                                className={`form-control ${!isCardNumberValid ? "is-invalid" : ""
-                                                                    }`}
-                                                                id="number"
+                                                                className="form-control"
                                                                 placeholder="Card number"
                                                                 type="text"
-                                                                valid
+                                                                value={paymentCardDetail.number} // Controlled input
+                                                                onChange={handleInputChange} // Using the modified handler
                                                                 name="number"
                                                                 required
                                                             />
+
                                                         </div>
                                                         <div className="form-group">
                                                             <label htmlFor="name">Full name</label>
@@ -134,11 +151,13 @@ function RechargeCard() {
                                                                 placeholder="Full name"
                                                                 type="text"
                                                                 name="name"
+                                                                value={RechargeCardDetail.name}
+                                                                onChange={handleInputChange}
                                                                 required
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className="col-lg-6">
+                                                    <div className="col-lg-6 mt-4">
                                                         <div className="form-group">
                                                             <label htmlFor="expiry">MM/YYYY</label>
                                                             <input
@@ -146,6 +165,8 @@ function RechargeCard() {
                                                                 id="expiry"
                                                                 placeholder="MM/YYYY"
                                                                 type="text"
+                                                                value={RechargeCardDetail.expiry}
+                                                                onChange={handleInputChange}
                                                                 name="expiry"
                                                                 required
                                                             />
@@ -158,6 +179,8 @@ function RechargeCard() {
                                                                 placeholder="CVC"
                                                                 type="text"
                                                                 name="cvc"
+                                                                value={RechargeCardDetail.cvc}
+                                                                onChange={handleInputChange}
                                                                 maxLength={3}
                                                                 required
                                                             />

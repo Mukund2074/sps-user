@@ -3,17 +3,20 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import ApiCall from "../ApiCall";
 
 function Apply() {
     const navigate = useNavigate();
+
+
+
+
     const [cardApplyDetail, setCardApplyDetail] = useState({
+
         name: "",
         email: "",
         phoneNo: "",
         address: "",
-        aadhaarNo: "",
-        vehicleNo: "",
     });
 
     useEffect(() => {
@@ -22,42 +25,44 @@ function Apply() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        let formattedValue = value;
-        if (name === "aadhaarNo") {
-            formattedValue = value.replace(/\D/g, ""); // Remove non-numeric characters
-            formattedValue = formattedValue.replace(/(\d{4})(?=\d)/g, "$1 "); // Add space after every 4 digits
-        }
-        setCardApplyDetail({ ...cardApplyDetail, [name]: formattedValue });
+        setCardApplyDetail((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(
-                "http://localhost:8000/user/applyForCard",
-                cardApplyDetail
-            );
-
+            const userId = document.cookie.split('; ').find((cookie) => cookie.startsWith("userData="))?.split('=')[1];
+            
+    
+            const response = await ApiCall("POST", "user/applyForCard", {
+                ...cardApplyDetail,
+                userId: userId, // Use the extracted ID
+            });
+    
             const { success } = response.data;
             if (success) {
                 toast.success(response.data.message, {
                     autoClose: 1500, onClose: () => navigate("/"),
                 });
             }
-
+    
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 toast.error(error.response.data.message, {
                     autoClose: 1500, onClose: () => navigate("/"),
-                })
+                });
             } else {
-                toast.error(error.response.data.message, {
+                toast.error("An error occurred.", {
                     autoClose: 1500,
-                })
+                });
             }
         }
-    }
+    };
+    
+
 
     return (
         <>
@@ -113,7 +118,7 @@ function Apply() {
                                         </p>
                                         <h6 className="mt-4">Contact:</h6>
                                         <p className="margin-top">
-                                            <a href="tel:+(91)7487841902">+(91)7487841902</a>
+                                            <a href="tel:+(91)DriveSyncParkX">+(91)DriveSyncParkX</a>
                                         </p>
                                     </div>
                                 </div>
@@ -151,7 +156,7 @@ function Apply() {
                                                 type="tel"
                                                 maxLength={10}
                                                 name="phoneNo"
-                                                placeholder="Phone"
+                                                placeholder="Phone Number"
                                                 value={cardApplyDetail.phoneNo}
                                                 onChange={handleChange}
                                                 className="contact-input"
@@ -159,31 +164,9 @@ function Apply() {
                                         </div>
                                     </div>
                                     <div className="form-input">
-                                        <input
-                                            type="text"
-                                            name="aadhaarNo"
-                                            placeholder="AADHAAR No"
-                                            value={cardApplyDetail.aadhaarNo}
-                                            onChange={handleChange}
-                                            maxLength="14"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-input">
-                                        <input
-                                            type="text"
-                                            name="vehicleNo"
-                                            placeholder="Vehicle No"
-                                            value={cardApplyDetail.vehicleNo}
-                                            onChange={handleChange}
-                                            maxLength="14"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-input">
                                         <div className="form-input">
                                             <textarea
-                                                placeholder="Address"
+                                                placeholder="Enter Your Address For Delivery"
                                                 name="address"
                                                 value={cardApplyDetail.address}
                                                 onChange={handleChange}

@@ -27,7 +27,7 @@ function Home() {
                                 <h4>Park your car and feel free...</h4>
                             </div>
                         </div>
-                        <img src="https://b2bblogassets.airtel.in/wp-content/uploads/2022/05/iot-based-smart-parking-scaled.jpg" style={{ height: '90%', width: '90%' }}  alt="smart parking"/>
+                        <img src="https://b2bblogassets.airtel.in/wp-content/uploads/2022/05/iot-based-smart-parking-scaled.jpg" style={{ height: '90%', width: '90%' }} alt="smart parking" />
 
                     </div>
                 </div>
@@ -110,7 +110,7 @@ function Home() {
                                 <div className="features4-grid-inn">
                                     <div className="img-featured">
                                         <div className="ch-item ">
-                                            <img className="ch-item " src="https://www.shutterstock.com/image-illustration/smart-parking-guidance-system-inground-260nw-1251560269.jpg" alt="smart parking"/>
+                                            <img className="ch-item " src="https://www.shutterstock.com/image-illustration/smart-parking-guidance-system-inground-260nw-1251560269.jpg" alt="smart parking" />
                                             <div className="ch-info-wrap">
                                                 <div className="ch-info">
                                                     <div className="ch-info-front" >
@@ -166,7 +166,7 @@ function Home() {
                                             <div className="ch-info-wrap">
                                                 <div className="ch-info">
                                                     <div className="ch-info-front ch-img-4" >
-                                                        <img className="ch-item" src="https://media.istockphoto.com/id/519196006/photo/aerial-view-of-parking-lot.jpg?s=612x612&w=0&k=20&c=nYTYkMoNRpOujZLJLFLX-8LPKjjnSi5ub9Yd5Ls_YKw="  alt="smart parking"/>
+                                                        <img className="ch-item" src="https://media.istockphoto.com/id/519196006/photo/aerial-view-of-parking-lot.jpg?s=612x612&w=0&k=20&c=nYTYkMoNRpOujZLJLFLX-8LPKjjnSi5ub9Yd5Ls_YKw=" alt="smart parking" />
                                                     </div>
 
                                                     <div className="ch-info-back">
@@ -245,9 +245,9 @@ function Home() {
                             <div className="col-lg-4 col-md-6 price-main-info mt-md-0 mt-4">
                                 <div className="price-inner card box-shadow active">
                                     <div className="card-body">
-                                       
+
                                         <h4 className="text-uppercase text-center mb-3">
-                                            Regular Booking 
+                                            Regular Booking
                                         </h4>
                                         <h5 className="card-title pricing-card-title">
                                             <span className="align-top">₹</span>10
@@ -287,36 +287,36 @@ function Home() {
             </section>
             {/* middle */}
             <div className="middle py-5">
-    <div className="container py-xl-5 py-lg-3" style={{
-        position: 'relative',
-        background: `url('https://advcloudfiles.advantech.com/web/Images/Solutions/iretail/solutions/public-space-service/parking_service_system_banner.jpg')`,
-        backgroundSize: 'cover'
-    }}>
-        <div style={{
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Black overlay with 50% opacity
-            backdropFilter: 'blur(5px)',
-            zIndex: 1
-        }}></div>
-        <div className="welcome-left text-left py-3" style={{ position: 'relative', zIndex: 2 }}>
-            <div className="title-content">
-                <h6 className="sub-title">Call Us</h6>
-                <h3 className="hny-title two mb-2">
-                    Any Doubt Related to Card?
-                </h3>
-                <p>
-                    Give us a call today at{" "}
-                    <Link className="btn btn-circle btn-white" to="tel:+917487841902">+(91)DriveSyncNo</Link>
-                </p>
+                <div className="container py-xl-5 py-lg-3" style={{
+                    position: 'relative',
+                    background: `url('https://advcloudfiles.advantech.com/web/Images/Solutions/iretail/solutions/public-space-service/parking_service_system_banner.jpg')`,
+                    backgroundSize: 'cover'
+                }}>
+                    <div style={{
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Black overlay with 50% opacity
+                        backdropFilter: 'blur(5px)',
+                        zIndex: 1
+                    }}></div>
+                    <div className="welcome-left text-left py-3" style={{ position: 'relative', zIndex: 2 }}>
+                        <div className="title-content">
+                            <h6 className="sub-title">Call Us</h6>
+                            <h3 className="hny-title two mb-2">
+                                Any Doubt Related to Card?
+                            </h3>
+                            <p>
+                                Give us a call today at{" "}
+                                <Link className="btn btn-circle btn-white" to="tel:+91DriveSyncParkX">+(91)DriveSyncNo</Link>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
             {/* //middle */}
             {/*/testimonials*/}

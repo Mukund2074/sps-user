@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
-import axios from "axios";
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
+import ApiCall from "../ApiCall";
 
 export default function Bookonline() {
     const [areas, setAreas] = useState([]);
@@ -13,17 +13,17 @@ export default function Bookonline() {
 
     useEffect(() => {
         try {
-            axios.get('http://localhost:8000/user/getAreas')
-            .then((response) => {
-                if (Array.isArray(response.data.areas)) {
-                    setAreas(response.data.areas);
-                } else {
-                    toast.error("Error fetching areas:", response.data.message);
-                }
-            })
-            .catch(error => {
-                toast.error("Error fetching areas:", error);
-            });
+            ApiCall('GET', 'user/getAreas')
+                .then((response) => {
+                    if (Array.isArray(response.data.areas)) {
+                        setAreas(response.data.areas);
+                    } else {
+                        toast.error("Error fetching areas:", response.data.message);
+                    }
+                })
+                .catch(error => {
+                    toast.error("Error fetching areas:", error);
+                });
         } catch (error) {
             toast.error("Error in useEffect:", error);
         }
@@ -59,57 +59,53 @@ export default function Bookonline() {
                             </li>
                         </ul>
                     </div>
+                    <span className="d-flex justify-content-center align-items-center">
+                        <p className=" text-light">
+                            search areas here :
+                        </p>
+                        <input
+                            type="text"
+                            className="p-2 mx-3 rounded"
+                            placeholder="Search areas..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{ maxWidth: '300px' }}
+                        />
+                    </span>
                 </div>
             </section>
-            <div className="container mt-4 mb-4 d-flex align-content-center justify-content-center">
-                <label htmlFor="search" className="btn btn-primary">Search:</label>
-                <input
-                    type="text"
-                    placeholder="Search areas..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{maxWidth:'auto'}}
-                />
-            </div>
-            <div className="row w3-services-grids d-flex justify-content-center">
+
+
+            <div className="grid-container  m-5">
                 {filteredAreas.map((item, index) => (
-                    <div 
-                        key={index} 
-                        className="causes-grid" 
+                    <div
+                        key={index}
                         style={{
                             border: hoverIndex === index ? "1px solid red" : "1px solid white",
-                            margin: '10px',
-                            width: '350px',
-                            borderRadius:'40px',
+                            borderRadius: '40px',
                             transition: 'all 0.3s ease-in-out',
+                            backgroundColor: "transparent ",
                             transform: hoverIndex === index ? "scale(1.05)" : "scale(1)",
                             boxShadow: hoverIndex === index ? "0 0 20px red" : "none"
                         }}
                         onMouseEnter={() => setHoverIndex(index)}
                         onMouseLeave={() => setHoverIndex(null)}
                     >
-                        <div className="causes-grid-info">
-                            <span className="cause-title-wrap">
-                                <h4 className="cause-title">{item.Name}<br/>{item.Locality}<br/>{item.Zipcode}</h4>
-                            </span>
-                            <p className="card-text">
+                        <div className="p-3 d-flex  flex-column">
+                            <h4 className="cause-title">{item.Name}<br />{item.Locality}<br />{item.Zipcode}</h4>
                             Available Slots : {JSON.stringify(item.availableOnlineSlot)}
-
-
-                            </p>
-                           <div className="btn-des">
-                           <button 
-                                className="btn btn-style btn-primary mt-4" 
-                                style={{ borderRadius: '80px' }} 
+                            <button
+                                className="btn btn-style btn-primary w-auto"
+                                style={{ borderRadius: '80px' }}
                                 onClick={() => handleBook(item)}
                             >
                                 Book
                             </button>
-                           </div>
                         </div>
                     </div>
                 ))}
             </div>
+
             <Footer />
         </div>
     );

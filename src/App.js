@@ -4,8 +4,7 @@ import About from "./Pages/About";
 import Services from "./Pages/Services";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import { useEffect, useState } from "react";
-import checkSession from "./auth/authService";
+import {  useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import Apply from "./Pages/Apply";
@@ -16,39 +15,19 @@ import RechargeCard from "./Pages/RechargeCard";
 import Payment from "./Pages/Payment";
 import Bookonline from "./Pages/Bookonline";
 import GetOnlineBooking from "./Pages/GetonlineBookings";
+import ViewCard from "./Pages/viewCard";
 
 function App() {
 
   axios.defaults.withCredentials = true;
-  const [loading, setLoading] = useState(true); // New loading state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = useState();
+  
   useEffect(() => {
-    const authenticateUser = async () => {
-      try {
-        const checkAuth = await checkSession();
-        if (checkAuth.isAuth) {
-          setIsAuthenticated(true);
-        }
-
-      } catch (error) {
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false); // Set loading to false after authentication check
-      }
-    };
-    if (!isAuthenticated) {
-      authenticateUser(); // Check session only if user is not authenticated
-    } else {
-      setLoading(false); // Set loading to false immediately if user is authenticated
+    const token = localStorage.getItem('AUTH_TOKEN');
+    if (token) {
+      setIsAuthenticated(true);
     }
-
   }, [isAuthenticated]);
-
-  if (loading) {
-    return null
-  }
-
   return (
     <>
       <ToastContainer stacked />
@@ -59,9 +38,10 @@ function App() {
           <Route path="/applyForCard" element={isAuthenticated ? < Apply /> : <Navigate to="/" />} />         
           <Route path="/bookings" element={isAuthenticated ? < GetOnlineBooking /> : <Navigate to="/" />} />
           <Route path="/addComplaint" element={isAuthenticated ? < AddComplaint /> : <Navigate to="/" />} />
-          <Route path="/recharge" element={isAuthenticated ? < RechargeCard /> : <Navigate to="/" />} />
+          <Route path="/rechargeCard" element={isAuthenticated ? < RechargeCard /> : <Navigate to="/" />} />
           <Route path="/payment" element={isAuthenticated ? <Payment /> : <Navigate to='/' />} />
           <Route path="/bookonline" element={isAuthenticated ? < Bookonline /> : <Navigate to="/" />} />
+          <Route path="/viewcard" element={isAuthenticated ? < ViewCard /> : <Navigate to="/" />} />
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />         

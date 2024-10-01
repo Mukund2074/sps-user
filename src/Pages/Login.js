@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import ApiCall from "../ApiCall";
 
 function Login({ setIsAuthenticated }) {
     const [loginData, setLoginData] = React.useState({
@@ -12,10 +12,6 @@ function Login({ setIsAuthenticated }) {
 
     const navigate = useNavigate();
 
-    const authenticateUser = () => {
-        setIsAuthenticated(true);
-        navigate("/");
-    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,21 +26,22 @@ function Login({ setIsAuthenticated }) {
         e.preventDefault();
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/user/userlogin",
-                loginData
-            );
+            const response = await ApiCall("POST", "user/userlogin", loginData);
 
-            const { success } = response.data;
-            
-            if (success) {
+            if (response.data.success) {
+                localStorage.setItem('AUTH_TOKEN', response.data.token);
+                localStorage.setItem('email', response.data.userData.email);
+                document.cookie = "hasCard=" + response.data.userData.hasCard;
+                document.cookie = "userData=" + response.data.userData._id;
+                setIsAuthenticated(true);
                 toast.success("Login Successful", {
-                    autoClose: 1500, 
-                    onClose: () => authenticateUser(),
+                    autoClose: 1500,
+                    onClose: () => navigate("/"),
                 });
             }
-
         } catch (error) {
+            toast.error("Login Err: ", error);
+            
             if (error.response && error.response.status === 401) {
                 toast.error(error.response.data.message, {
                     autoClose: 1500,

@@ -12,10 +12,10 @@ function Footer() {
                                 <div className="col-lg-4 col-md-6 sub-one-left pr-lg-4">
                                     <h2>
                                         <Link className="navbar-brand" to="/">
-                                        <span>D</span>rive<span>S</span>ync<span>P</span>ark<span>X</span>
+                                            <span>D</span>rive<span>S</span>ync<span>P</span>ark<span>X</span>
                                         </Link>
                                     </h2>
-                               
+
                                     <p className="pr-lg-4">
                                         DriveSyncParkX is an online parking management system.
                                         It helps the users to book online parking slot via DriveSyncParkX.
@@ -67,9 +67,9 @@ function Footer() {
                                 <div className="col-lg-4 col-md-6 sub-one-left">
                                     <h6>Our Services </h6>
                                     <div className="mid-footer-gd sub-two-right">
-                                        
+
                                         <ul>
-                                            
+
                                             <li>
                                                 <Link to="/about">
                                                     <span className="fa fa-angle-double-right mr-2" />{" "}
@@ -85,13 +85,13 @@ function Footer() {
                                             <li>
                                                 <Link to="/bookonline">
                                                     <span className="fa fa-angle-double-right mr-2" />{" "}
-                                                 Bookonline
+                                                    Bookonline
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link to="/applyForCard">
                                                     <span className="fa fa-angle-double-right mr-2" />
-                                                   Apply For Card
+                                                    Apply For Card
                                                 </Link>
                                             </li>
                                         </ul>
@@ -127,13 +127,13 @@ function Footer() {
                                     <h6>Contact Info</h6>
                                     <div className="sub-contact-info">
                                         <p>
-                                          New Naroda,Ahmedabad, Gujarat
-                                          382330
+                                            New Naroda,Ahmedabad, Gujarat
+                                            382330
                                         </p>
                                         <p className="my-3">
                                             Phone:{" "}
                                             <strong>
-                                                <Link to="tel:+917487841902">+91 7487841902</Link>
+                                                <Link to="tel:+91DriveSyncParkX">+91 DriveSyncParkX</Link>
                                             </strong>
                                         </p>
                                         <p>

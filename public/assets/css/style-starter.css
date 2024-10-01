@@ -16917,9 +16917,6 @@ button.owl-next {
   -o-transition: 0.3s;
 }
 
-.w3-services-grids p {
-}
-
 /*-- /progress --*/
 .w3-services-grids span.progressText {
   color: #443737;
@@ -18000,3 +17997,39 @@ ul.breadcrumbs-custom-path li a {
   }
 }
 
+
+.grid-container {
+  display: grid;
+  gap: 30px;
+  justify-content: center; /* Center the grid items */
+}
+
+
+/* Large screens (lg) */
+@media (min-width: 992px) {
+  .grid-container {
+      grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+  }
+}
+
+/* Medium screens (md) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .grid-container {
+      grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+  }
+}
+
+/* Small screens (sm) */
+@media (max-width: 767px) {
+  .grid-container {
+      grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+  }
+}
+
+.cause-title{
+  font-size: 22px;
+  margin: 16px 0 10px 0;
+  line-height: 27px;
+  font-weight: 700;
+  color: #5e4444;
+}

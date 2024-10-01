@@ -111,7 +111,7 @@ function GiveFeedback() {
                                         </p>
                                         <h6 className="mt-4">Contact:</h6>
                                         <p className="margin-top">
-                                            <a href="tel:+(91)7487841902">+(91)7487841902</a>
+                                            <a href="tel:+(91)DriveSyncParkX">+(91)DriveSyncParkX</a>
                                         </p>
                                     </div>
                                 </div>

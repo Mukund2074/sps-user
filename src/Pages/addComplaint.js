@@ -24,17 +24,17 @@ function AddComplaint() {
         const { name, value } = e.target;
 
         setComplaint((prevData) =>
-            ({
-                ...prevData,
-                [name]: value
-            })
+        ({
+            ...prevData,
+            [name]: value
+        })
         );
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-          const response = await ApiCall("POST", "user/addComplaint", complaint);
+            const response = await ApiCall("POST", "user/addComplaint", complaint);
             const { success } = response.data;
             if (success) {
                 toast.success(response.data.message, {
@@ -109,7 +109,7 @@ function AddComplaint() {
                                         </p>
                                         <h6 className="mt-4">Contact:</h6>
                                         <p className="margin-top">
-                                            <a href="tel:+(91)7487841902">+(91)7487841902</a>
+                                            <a href="tel:+(91)DriveSyncParkX">+(91)DriveSyncParkX</a>
                                         </p>
                                     </div>
                                 </div>
